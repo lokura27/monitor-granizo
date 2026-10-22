@@ -51,7 +51,7 @@ RADIO_SALTO_KM = 60     # radio para detectar "salto de rayos"
 DIST_CERCA_KM = 40      # tormenta "cerca"
 DIST_ENCIMA_KM = 10     # tormenta "encima"
 VENTANA_MIN = 10        # se comparan dos ventanas de 10 min (reciente vs previa)
-SALTO_MIN_RAYOS = 15    # mínimo de rayos en la ventana reciente para hablar de salto
+SALTO_MIN_RAYOS = 25    # mínimo de rayos en la ventana reciente para hablar de salto
 SALTO_FACTOR = 2.0      # la ventana reciente tiene que duplicar a la previa
 COOLDOWN_MIN = 20       # no repetir el mismo nivel de aviso antes de esto
 CALMA_MIN = 45          # sin rayos este tiempo = "se fue"
