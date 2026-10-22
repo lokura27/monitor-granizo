@@ -1,0 +1,43 @@
+name: Monitor granizo Malargue
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: monitor-granizo
+  cancel-in-progress: false
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: state.json
+          key: estado-${{ github.run_id }}
+          restore-keys: estado-
+
+      - name: Revisar rayos y pronostico
+        run: python granizo_monitor.py
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          LAT: ${{ secrets.LAT }}
+          LON: ${{ secrets.LON }}
+
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: state.json
+          key: estado-${{ github.run_id }}
