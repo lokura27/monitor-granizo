@@ -46,7 +46,7 @@ LON = float(os.getenv("LON") or "-69.585")
 NTFY_TOPIC = os.getenv("NTFY_TOPIC", "").strip()
 STATE_FILE = os.getenv("STATE_FILE") or "state.json"
 
-RADIO_KM = 100          # radio de vigilancia de rayos
+RADIO_KM = 60           # radio de vigilancia de rayos
 RADIO_SALTO_KM = 60     # radio para detectar "salto de rayos"
 DIST_CERCA_KM = 40      # tormenta "cerca"
 DIST_ENCIMA_KM = 10     # tormenta "encima"
