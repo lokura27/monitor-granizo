@@ -13,6 +13,18 @@ jobs:
   revisar:
     runs-on: ubuntu-latest
     timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - lugar: malargue
+            nombre: ""
+            lat: "-35.475"
+            lon: "-69.585"
+          - lugar: sanrafael
+            nombre: "San Rafael"
+            lat: "-34.6286"
+            lon: "-68.3493"
     steps:
       - uses: actions/checkout@v4
 
@@ -26,18 +38,19 @@ jobs:
       - uses: actions/cache/restore@v4
         with:
           path: state.json
-          key: estado-${{ github.run_id }}
-          restore-keys: estado-
+          key: estado-${{ matrix.lugar }}-${{ github.run_id }}
+          restore-keys: estado-${{ matrix.lugar }}-
 
       - name: Revisar rayos y pronostico
         run: python granizo_monitor.py
         env:
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-          LAT: ${{ secrets.LAT }}
-          LON: ${{ secrets.LON }}
+          NTFY_TOPIC: ${{ matrix.lugar == 'sanrafael' && secrets.NTFY_TOPIC_SR || secrets.NTFY_TOPIC }}
+          LAT: ${{ matrix.lat }}
+          LON: ${{ matrix.lon }}
+          LUGAR: ${{ matrix.nombre }}
 
       - uses: actions/cache/save@v4
         if: always()
         with:
           path: state.json
-          key: estado-${{ github.run_id }}
+          key: estado-${{ matrix.lugar }}-${{ github.run_id }}
