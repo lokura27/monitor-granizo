@@ -44,6 +44,7 @@ from netCDF4 import Dataset
 LAT = float(os.getenv("LAT") or "-35.475")
 LON = float(os.getenv("LON") or "-69.585")
 NTFY_TOPIC = os.getenv("NTFY_TOPIC", "").strip()
+LUGAR = os.getenv("LUGAR", "").strip()   # nombre que aparece en los avisos, ej. "San Rafael"
 STATE_FILE = os.getenv("STATE_FILE") or "state.json"
 
 RADIO_KM = 60           # radio de vigilancia de rayos
@@ -109,6 +110,8 @@ def guardar_estado(estado):
 
 def avisar(titulo, mensaje, prioridad=3, tags=("zap",)):
     """Notificación por ntfy. Prioridad: 1 mín, 2 baja, 3 normal, 4 alta, 5 urgente."""
+    if LUGAR:
+        titulo = f"{LUGAR}: {titulo}"
     print(f"[AVISO p{prioridad}] {titulo}: {mensaje}")
     if not NTFY_TOPIC:
         print("  (NTFY_TOPIC vacío: no se envía al celular)")
@@ -388,8 +391,9 @@ def analizar_pronostico(estado):
 
     desde, hasta = horas_riesgo[0][0], horas_riesgo[-1][0]
     cape_max = max(c for _, _, c in horas_riesgo)
+    cuando = f"alrededor de las {desde}" if desde == hasta else f"entre las {desde} y las {hasta}"
     avisar(f"Riesgo {nivel} de tormentas hoy",
-           f"Atmósfera inestable entre las {desde} y las {hasta} (CAPE máx {cape_max:.0f}). "
+           f"Atmósfera inestable {cuando} (CAPE máx {cape_max:.0f}). "
            "Posibles tormentas con granizo: te aviso si aparecen rayos cerca.",
            4 if nivel == "ALTO" else 3, ("cloud_with_lightning",))
     estado["pronostico"] = {"fecha": hoy, "nivel": nivel}
